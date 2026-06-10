@@ -9,6 +9,14 @@
     --text-muted: #8b8c8f;
     --font-heading: 'Orbitron', sans-serif;
     --font-body: 'Inter', sans-serif;
+    
+    /* Environmental colors */
+    --env-primary: #00f5d4; /* Neon Teal */
+    --env-secondary: #00bbf9; /* Neon Cyan */
+    --env-accent: #05a8aa;
+    --env-warning: #ffb703; /* Yellow-Orange */
+    --env-danger: #ff003c;
+    --env-card-border: rgba(0, 245, 212, 0.2);
 }
 
 * {
@@ -50,6 +58,51 @@ header {
     margin-bottom: 3rem;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+/* Navigation Bar */
+.main-nav {
+    display: flex;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.nav-item {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.4);
+}
+
+/* Green theme navigation override */
+.nav-item.active.env-theme {
+    background: linear-gradient(135deg, var(--env-primary), var(--env-accent));
+    box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+    color: #0b0c10;
+    font-weight: bold;
 }
 
 h1, h2, h3 {
@@ -485,3 +538,137 @@ tbody tr td:first-child {
     h1 { font-size: 1.8rem; }
     .glass-card { padding: 1.5rem; }
 }
+
+/* --- Environmental Dashboard Styles --- */
+
+.glass-card.env-card::before {
+    background: linear-gradient(to bottom, var(--env-primary), var(--env-secondary));
+    box-shadow: 0 0 15px var(--env-primary);
+}
+
+.glass-card.env-card h2 {
+    color: var(--env-primary);
+}
+
+/* Safe status indicator */
+.status-indicator.safe {
+    color: var(--env-primary);
+    border: 1px solid rgba(0, 245, 212, 0.3);
+    background: rgba(0, 245, 212, 0.05);
+}
+
+.status-indicator.safe .pulse {
+    background-color: var(--env-primary);
+    box-shadow: 0 0 10px var(--env-primary);
+    animation: blink-safe 1.5s infinite;
+}
+
+@keyframes blink-safe {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); box-shadow: 0 0 20px var(--env-primary); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Environmental table colors */
+table.env-table tbody tr td:first-child {
+    color: var(--env-secondary);
+}
+
+table.env-table tbody tr:hover {
+    background: rgba(0, 245, 212, 0.05);
+}
+
+/* Badge styling for environmental indicators */
+.badge.warning {
+    background: rgba(255, 183, 3, 0.15);
+    border: 1px solid var(--env-warning);
+    color: var(--env-warning);
+}
+
+.badge.danger {
+    background: rgba(255, 0, 60, 0.15);
+    border: 1px solid var(--env-danger);
+    color: var(--env-danger);
+}
+
+.badge.success {
+    background: rgba(0, 245, 212, 0.15);
+    border: 1px solid var(--env-primary);
+    color: var(--env-primary);
+}
+
+/* Filter Group styling */
+.filter-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-filter {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+    background: rgba(0, 245, 212, 0.05);
+    color: var(--env-primary);
+    border-color: rgba(0, 245, 212, 0.3);
+}
+
+.btn-filter.active {
+    background: rgba(0, 245, 212, 0.15);
+    color: var(--env-primary);
+    border-color: var(--env-primary);
+    box-shadow: 0 0 10px rgba(0, 245, 212, 0.2);
+    font-weight: 600;
+}
+
+/* Pagination controls */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-page {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-page:hover:not(:disabled) {
+    background: rgba(0, 245, 212, 0.08);
+    color: var(--env-primary);
+    border-color: rgba(0, 245, 212, 0.3);
+}
+
+.btn-page:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-info {
+    color: var(--text-muted);
+}
+
