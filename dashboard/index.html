@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Nexus - Incident Report</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>PROJECT NEXUS</h1>
+                <p class="subtitle">SECURITY INCIDENT DASHBOARD</p>
+            </div>
+            <div class="status-indicator">
+                <span class="pulse"></span>
+                <span>SYSTEM COMPROMISED</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- High Level Overview -->
+            <section class="glass-card section-overview">
+                <h2>INCIDENT OVERVIEW</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <h3>TOTAL ATTACKS</h3>
+                        <p id="total-attacks" class="neon-text">Loading...</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>TIMEFRAME</h3>
+                        <p id="timeframe" class="neon-text">Loading...</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>UNIQUE IPs</h3>
+                        <p id="unique-ips" class="neon-text">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Question 1: WHO ARE THEY? -->
+            <section class="glass-card section-who">
+                <h2>1. WHO ARE THEY? <span class="desc">(Identified Hacker IP Addresses)</span></h2>
+                <div class="table-container">
+                    <table id="ip-table">
+                        <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>Access Count</th>
+                                <th>First Access</th>
+                                <th>Last Access</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Question 2: WHEN & HOW? -->
+            <section class="glass-card section-how">
+                <h2>2. WHEN & HOW? <span class="desc">(Attack Pattern Analysis)</span></h2>
+                <div class="pattern-details">
+                    <div class="detail-item">
+                        <span class="label">HTTP Status Code:</span>
+                        <span class="value" id="pattern-status">Loading...</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Response Payload:</span>
+                        <span class="value" id="pattern-size">Loading...</span>
+                    </div>
+                    <div class="detail-item description">
+                        <span class="label">Anomaly Pattern:</span>
+                        <p id="pattern-desc">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Question 4: HIDDEN BONUS -->
+            <section class="glass-card section-bonus">
+                <h2>3. HIDDEN BONUS <span class="desc">(The Real Name)</span></h2>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="btn red"></span>
+                        <span class="btn yellow"></span>
+                        <span class="btn green"></span>
+                        <span class="title">decrypt.exe - Decoded Payload</span>
+                    </div>
+                    <div class="terminal-body" id="terminal-body">
+                        <p class="prompt">C:\NEXUS> decrypting anomalies.log...</p>
+                        <p class="prompt">C:\NEXUS> extracting trailing characters...</p>
+                        <div class="typing-container">
+                            <span id="typed-message" class="typed-text"></span><span class="cursor">_</span>
+                        </div>
+                        <div class="hacker-reveal hidden" id="hacker-reveal">
+                            <h3>HACKER IDENTIFIED: <span class="glitch" data-text="GOEMON" id="hacker-name">GOEMON</span></h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Load Data and Logic -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
