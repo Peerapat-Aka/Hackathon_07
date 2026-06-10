@@ -242,6 +242,127 @@ tbody tr td:first-child {
     font-family: var(--font-body);
 }
 
+/* Data Analysis Section styles */
+.section-analysis {
+    margin-bottom: 2rem;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.insights-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.insights-panel h3, .geo-table-container h3 {
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.insight-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.9rem 1.2rem;
+    border-radius: 4px;
+    border-left: 2px solid var(--primary-color);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.insight-stat:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.insight-stat .label {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.insight-stat .value {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
+    text-align: right;
+}
+
+.insight-stat .value span.attack-badge {
+    display: inline-block;
+    background: rgba(247, 37, 133, 0.15);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 5px;
+    font-family: var(--font-body);
+    font-weight: 600;
+}
+
+.geo-table-container {
+    margin-top: 1.5rem;
+}
+
+/* Badge Styling */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    border-radius: 3px;
+    text-shadow: 0 0 5px currentColor;
+}
+
+.badge.critical {
+    background: rgba(255, 0, 60, 0.15);
+    border: 1px solid #ff003c;
+    color: #ff003c;
+}
+
+.badge.high {
+    background: rgba(247, 37, 133, 0.15);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.share-text {
+    font-family: monospace;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+/* Responsive fixes */
+@media (max-width: 992px) {
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+    .chart-container {
+        height: 350px;
+    }
+}
+
 /* Terminal Bonus Section */
 .terminal-window {
     background: #000;
