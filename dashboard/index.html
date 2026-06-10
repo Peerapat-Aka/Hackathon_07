@@ -63,6 +63,59 @@
                 </div>
             </section>
 
+            <!-- Question 1.1: WHO THEY ARE - DATA ANALYSIS -->
+            <section class="glass-card section-analysis">
+                <h2>1.1. WHO THEY ARE: DATA ANALYSIS <span class="desc">(Traffic Share & Geographic Threat Profile)</span></h2>
+                <div class="analysis-grid">
+                    <div class="chart-container">
+                        <canvas id="ipChart"></canvas>
+                    </div>
+                    <div class="insights-panel">
+                        <h3>THREAT INTELLIGENCE SUMMARY</h3>
+                        <div class="insight-stat">
+                            <span class="label">Total Threat Actors:</span>
+                            <span class="value" id="total-actors">19 Bots</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="label">Top Threat Contributor:</span>
+                            <span class="value" id="top-contributor">Loading...</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="label">Average Accesses/IP:</span>
+                            <span class="value" id="avg-accesses">Loading...</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="label">Coordinated Attack Window:</span>
+                            <span class="value" id="attack-window">Loading...</span>
+                        </div>
+                        <div class="insight-stat">
+                            <span class="label">Botnet Similarity Score:</span>
+                            <span class="value" id="botnet-similarity">99.8% (Highly Uniform)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="geo-table-container">
+                    <h3>GEOLOCATION & RISK CLASSIFICATION</h3>
+                    <div class="table-container">
+                        <table id="geo-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Estimated Country</th>
+                                    <th>ISP / Organization</th>
+                                    <th>Threat Share</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- Question 2: WHEN & HOW? -->
             <section class="glass-card section-how">
                 <h2>2. WHEN & HOW? <span class="desc">(Attack Pattern Analysis)</span></h2>
@@ -108,6 +161,7 @@
     </div>
 
     <!-- Load Data and Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
