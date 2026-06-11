@@ -6,17 +6,31 @@ df = pd.read_csv("Export.csv", skiprows=1)
 # ลบช่องว่างชื่อคอลัมน์
 df.columns = df.columns.str.strip()
 
-# แปลงเป็นตัวเลข
+# แปลงข้อมูลเป็นตัวเลข
 df["Wind Direction"] = pd.to_numeric(df["Wind Direction"], errors="coerce")
 df["Wind Speed"] = pd.to_numeric(df["Wind Speed"], errors="coerce")
+
+sensor_cols = [
+    "Sensor 1",
+    "Sensor 2",
+    "Sensor 3",
+    "Sensor 4",
+    "Sensor 5",
+    "Sensor 6",
+    "Sensor 7",
+    "Sensor 8"
+]
+
+for col in sensor_cols:
+    df[col] = pd.to_numeric(df[col], errors="coerce")
 
 # ลบข้อมูลว่าง
 df = df.dropna(subset=["Wind Direction", "Wind Speed"])
 
-# กรองความเร็วลมที่ถูกต้อง
+# กรองข้อมูลผิดสเปก
 df = df[(df["Wind Speed"] >= 0) & (df["Wind Speed"] <= 40)]
 
-# แบ่งกลุ่มทิศทางลม
+# แบ่งทิศลมเป็น 4 กลุ่ม
 df["Direction"] = pd.cut(
     df["Wind Direction"],
     bins=[0, 90, 180, 270, 360],
@@ -24,13 +38,18 @@ df["Direction"] = pd.cut(
     include_lowest=True
 )
 
-# ค่าเฉลี่ยความเร็วลมแต่ละทิศ
-avg_speed = df.groupby("Direction")["Wind Speed"].mean()
+# ค่าเฉลี่ย Sensor ทั้ง 8 ตัวของแต่ละแถว
+df["Gas_Avg"] = df[sensor_cols].mean(axis=1)
 
-print(avg_speed)
+# ค่าเฉลี่ยรวมตามทิศลม
+result = df.groupby("Direction")["Gas_Avg"].mean()
 
-# ทิศที่แรงที่สุด
-max_direction = avg_speed.idxmax()
-max_speed = avg_speed.max()
+print("ค่าเฉลี่ย Sensor Gas ตามทิศลม")
+print(result)
 
-print(f"{max_direction} : {max_speed:.2f} m/s")
+# ทิศที่มีค่าเฉลี่ยสูงสุด
+max_dir = result.idxmax()
+max_value = result.max()
+
+print("\nทิศที่มีกลิ่นสูงสุด")
+print(f"{max_dir} : {max_value:.2f}")
