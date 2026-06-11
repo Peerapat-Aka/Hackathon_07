@@ -47,6 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3.1. Populate Data Analysis & Render Chart
     renderAnalysis();
 
+    // 3.2. Render Latency Dashboard
+    renderLatencyAnalysis();
+
+    // 3.3. Render Timeline Chart
+    renderTimelineChart();
+
     // 4. Typing Animation for Hidden Bonus
     const typedTextElement = document.getElementById('typed-message');
     const hackerReveal = document.getElementById('hacker-reveal');
@@ -116,11 +122,9 @@ function renderAnalysis() {
         
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${ipData.ip}</td>
-            <td>${geoInfo.country}</td>
-            <td>${geoInfo.isp}</td>
-            <td><span class="share-text">${share}%</span></td>
-            <td><span class="badge ${geoInfo.risk.toLowerCase()}">${geoInfo.risk}</span></td>
+            <td style="text-align: left; padding-left: 20px; font-weight: 500;">${ipData.ip}</td>
+            <td style="text-align: center;"><span class="share-text" style="font-size: 1.05rem;">${share}%</span></td>
+            <td style="text-align: right; padding-right: 20px;"><span class="badge ${geoInfo.risk.toLowerCase()}">${geoInfo.risk}</span></td>
         `;
         geoTableBody.appendChild(row);
     });
@@ -198,6 +202,436 @@ function renderAnalysis() {
                             size: 11
                         }
                     }
+                }
+            }
+        }
+    });
+}
+
+// 6. Latency Analysis
+function renderLatencyAnalysis() {
+    if (!dashboardData.latencyData) return;
+    
+    const latData = dashboardData.latencyData;
+    
+    // Populate Latency Summary
+    document.getElementById('avg-latency').textContent = `${latData.overallAvg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ms`;
+    document.getElementById('max-latency').textContent = `${latData.maxLatency.toLocaleString()} ms`;
+    document.getElementById('min-latency').textContent = `${latData.minLatency.toLocaleString()} ms`;
+    
+    // Calculate anomalous avg latency
+    const anomalousEndpoint = latData.endpoints.find(e => e.path.includes("Anomalous"));
+    document.getElementById('anomalous-latency').textContent = anomalousEndpoint ? `${anomalousEndpoint.avg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ms` : "N/A";
+    
+    // Populate Endpoint Table
+    const tableBody = document.querySelector('#latency-table tbody');
+    latData.endpoints.forEach(ep => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${ep.path}</td>
+            <td>${ep.avg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>${ep.max.toLocaleString()}</td>
+            <td>${ep.count.toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // Render Latency Distribution Chart
+    const ctx = document.getElementById('latencyChart').getContext('2d');
+    
+    const chartLabels = Object.keys(latData.distribution);
+    const chartDataValues = Object.values(latData.distribution);
+    
+    // Use contrasting colors for latency
+    const chartColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#fca311';
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: chartLabels.map(label => label + ' ms'),
+            datasets: [{
+                data: chartDataValues,
+                backgroundColor: [
+                    'rgba(76, 201, 240, 0.7)',
+                    'rgba(67, 97, 238, 0.7)',
+                    'rgba(114, 9, 183, 0.7)',
+                    'rgba(247, 37, 133, 0.7)',
+                    'rgba(252, 163, 17, 0.7)'
+                ],
+                borderColor: 'rgba(22, 24, 28, 1)',
+                borderWidth: 2,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#e0e1dd',
+                        font: {
+                            family: 'Inter',
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#16181c',
+                    titleColor: '#fca311',
+                    bodyColor: '#e0e1dd',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return ` Requests: ${context.parsed.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+// 7. Timeline Chart
+function renderTimelineChart() {
+    if (!dashboardData.timelineData) return;
+    
+    const timelineData = dashboardData.timelineData;
+    const ctx = document.getElementById('timelineChart').getContext('2d');
+    
+    const labels = Object.keys(timelineData).sort(); // YYYY-MM
+    const downData = labels.map(month => timelineData[month].system_down);
+    const slowData = labels.map(month => timelineData[month].system_slow);
+    
+    // Gradient for the background under the lines (optional, but looks good)
+    const gradientDown = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientDown.addColorStop(0, 'rgba(247, 37, 133, 0.5)');
+    gradientDown.addColorStop(1, 'rgba(247, 37, 133, 0.0)');
+    
+    const gradientSlow = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientSlow.addColorStop(0, 'rgba(252, 163, 17, 0.5)');
+    gradientSlow.addColorStop(1, 'rgba(252, 163, 17, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'ระบบล่ม (500/504)',
+                    data: downData,
+                    borderColor: '#f72585', // primary color / red
+                    backgroundColor: gradientDown,
+                    borderWidth: 3,
+                    tension: 0.4, // smooth curves
+                    fill: true,
+                    pointBackgroundColor: '#16181c',
+                    pointBorderColor: '#f72585',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'ระบบหน่วง (200 ตอบช้า)',
+                    data: slowData,
+                    borderColor: '#fca311', // accent color / yellow
+                    backgroundColor: gradientSlow,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#16181c',
+                    pointBorderColor: '#fca311',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: '#e0e1dd',
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        padding: 20,
+                        font: {
+                            family: 'Inter',
+                            size: 13
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#16181c',
+                    titleColor: '#e0e1dd',
+                    bodyColor: '#e0e1dd',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.dataset.label}: ${context.parsed.y.toLocaleString()} ครั้ง`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b8c8f',
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b8c8f',
+                        font: {
+                            family: 'monospace',
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// 6. Latency Analysis
+function renderLatencyAnalysis() {
+    if (!dashboardData.latencyData) return;
+    
+    const latData = dashboardData.latencyData;
+    
+    // Populate Latency Summary
+    document.getElementById('avg-latency').textContent = `${latData.overallAvg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ms`;
+    document.getElementById('max-latency').textContent = `${latData.maxLatency.toLocaleString()} ms`;
+    document.getElementById('min-latency').textContent = `${latData.minLatency.toLocaleString()} ms`;
+    
+    // Calculate anomalous avg latency
+    const anomalousEndpoint = latData.endpoints.find(e => e.path.includes("Anomalous"));
+    document.getElementById('anomalous-latency').textContent = anomalousEndpoint ? `${anomalousEndpoint.avg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ms` : "N/A";
+    
+    // Populate Endpoint Table
+    const tableBody = document.querySelector('#latency-table tbody');
+    latData.endpoints.forEach(ep => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${ep.path}</td>
+            <td>${ep.avg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>${ep.max.toLocaleString()}</td>
+            <td>${ep.count.toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // Render Latency Distribution Chart
+    const ctx = document.getElementById('latencyChart').getContext('2d');
+    
+    const chartLabels = Object.keys(latData.distribution);
+    const chartDataValues = Object.values(latData.distribution);
+    
+    // Use contrasting colors for latency
+    const chartColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#fca311';
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: chartLabels.map(label => label + ' ms'),
+            datasets: [{
+                data: chartDataValues,
+                backgroundColor: [
+                    'rgba(76, 201, 240, 0.7)',
+                    'rgba(67, 97, 238, 0.7)',
+                    'rgba(114, 9, 183, 0.7)',
+                    'rgba(247, 37, 133, 0.7)',
+                    'rgba(252, 163, 17, 0.7)'
+                ],
+                borderColor: 'rgba(22, 24, 28, 1)',
+                borderWidth: 2,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#e0e1dd',
+                        font: {
+                            family: 'Inter',
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#16181c',
+                    titleColor: '#fca311',
+                    bodyColor: '#e0e1dd',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return ` Requests: ${context.parsed.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+// 7. Timeline Chart
+function renderTimelineChart() {
+    if (!dashboardData.timelineData) return;
+    
+    const timelineData = dashboardData.timelineData;
+    const ctx = document.getElementById('timelineChart').getContext('2d');
+    
+    const labels = Object.keys(timelineData).sort(); // YYYY-MM
+    const downData = labels.map(month => timelineData[month].system_down);
+    const slowData = labels.map(month => timelineData[month].system_slow);
+    
+    // Gradient for the background under the lines (optional, but looks good)
+    const gradientDown = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientDown.addColorStop(0, 'rgba(247, 37, 133, 0.5)');
+    gradientDown.addColorStop(1, 'rgba(247, 37, 133, 0.0)');
+    
+    const gradientSlow = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientSlow.addColorStop(0, 'rgba(252, 163, 17, 0.5)');
+    gradientSlow.addColorStop(1, 'rgba(252, 163, 17, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'ระบบล่ม (500/504)',
+                    data: downData,
+                    borderColor: '#f72585', // primary color / red
+                    backgroundColor: gradientDown,
+                    borderWidth: 3,
+                    tension: 0.4, // smooth curves
+                    fill: true,
+                    pointBackgroundColor: '#16181c',
+                    pointBorderColor: '#f72585',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'ระบบหน่วง (200 ตอบช้า)',
+                    data: slowData,
+                    borderColor: '#fca311', // accent color / yellow
+                    backgroundColor: gradientSlow,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#16181c',
+                    pointBorderColor: '#fca311',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: '#e0e1dd',
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        padding: 20,
+                        font: {
+                            family: 'Inter',
+                            size: 13
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#16181c',
+                    titleColor: '#e0e1dd',
+                    bodyColor: '#e0e1dd',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.dataset.label}: ${context.parsed.y.toLocaleString()} ครั้ง`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b8c8f',
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b8c8f',
+                        font: {
+                            family: 'monospace',
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    },
+                    beginAtZero: true
                 }
             }
         }

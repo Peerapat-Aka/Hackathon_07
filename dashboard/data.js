@@ -30,6 +30,50 @@ const dashboardData = {
         size: "Unusually large response sizes (6,000 - 12,000 Bytes)",
         description: "Attackers requested normal paths but appended a single uppercase letter or underscore at the very end of the endpoint (e.g., /productsG, /indexE.html). When extracting these appended characters chronologically across millions of requests, they form a hidden message."
     },
+    latencyData: {
+        overallAvg: 2437.71,
+        maxLatency: 12000,
+        minLatency: 10,
+        distribution: {
+            "0-50": 3467223,
+            "51-100": 4231142,
+            "101-150": 4231045,
+            "151-200": 1780934,
+            "200+": 7436053
+        },
+        endpoints: [
+            { path: "Normal (/checkout, /cart, etc)", avg: 107.75, max: 250, count: 12913363 },
+            { path: "Normal (/search)", avg: 629.41, max: 8000, count: 2859400 },
+            { path: "Anomalous (Hacker IPs)", avg: 9001.25, max: 12000, count: 5373634 }
+        ]
+    },
+    timelineData: {
+        "2024-06": { "system_down": 208835, "system_slow": 7031 },
+        "2024-07": { "system_down": 242359, "system_slow": 13718 },
+        "2024-08": { "system_down": 248999, "system_slow": 16533 },
+        "2024-09": { "system_down": 175395, "system_slow": 16042 },
+        "2024-10": { "system_down": 141794, "system_slow": 4557 },
+        "2024-11": { "system_down": 280398, "system_slow": 6968 },
+        "2024-12": { "system_down": 173912, "system_slow": 6968 },
+        "2025-01": { "system_down": 439876, "system_slow": 11356 },
+        "2025-02": { "system_down": 27365, "system_slow": 6854 },
+        "2025-03": { "system_down": 197829, "system_slow": 14749 },
+        "2025-04": { "system_down": 251153, "system_slow": 11497 },
+        "2025-05": { "system_down": 229942, "system_slow": 14217 },
+        "2025-06": { "system_down": 160501, "system_slow": 14531 },
+        "2025-07": { "system_down": 268825, "system_slow": 18266 },
+        "2025-08": { "system_down": 144141, "system_slow": 5459 },
+        "2025-09": { "system_down": 301476, "system_slow": 8782 },
+        "2025-10": { "system_down": 281968, "system_slow": 9147 },
+        "2025-11": { "system_down": 232253, "system_slow": 10783 },
+        "2025-12": { "system_down": 287113, "system_slow": 15972 },
+        "2026-01": { "system_down": 144608, "system_slow": 15603 },
+        "2026-02": { "system_down": 220193, "system_slow": 8064 },
+        "2026-03": { "system_down": 228148, "system_slow": 13150 },
+        "2026-04": { "system_down": 199856, "system_slow": 11634 },
+        "2026-05": { "system_down": 233488, "system_slow": 10281 },
+        "2026-06": { "system_down": 52474, "system_slow": 4506 }
+    },
     hackerName: "GOEMON",
     hackerMessage: "NEXUS_CART_WAS_TO_EASY_YOUR_SYSTEM_WAS_ALREADY_FALING_APART_BEFORE_YOU_EVEN_REALIZED_IT_WAS_ME_GOEMON"
 };
